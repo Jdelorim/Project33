@@ -1,11 +1,12 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
 import "./Login.css";
 import axios from "axios";
 
 class Login extends Component {
 
     state= {
-        email: "",
+        username: "",
         password: "",
         redirectTo: null
     };
@@ -32,14 +33,15 @@ class Login extends Component {
         console.log(`password: ${this.state.password}`);
         }
         */
-       axios.post("/login", {
+       axios.post("/api/login", {
            username: this.state.username,
            password: this.state.password
        }).then(response => {
            console.log(`response: ${response}`);
            if (response.status === 200) {
+               console.log(`username? ${response.data.username} `);
                this.probs.updateUser({
-                   loggedIn:true,
+                   loggedIn: true,
                    username: response.data.username
                })
                this.setState({
@@ -53,6 +55,9 @@ class Login extends Component {
 
 
 render(){
+    if(this.state.redirectTo){
+        return <Redirect to={{ pathname: this.state.redirectTo}} />
+    }
     return(
     <div className="login-main">
         <div className="container">
@@ -60,12 +65,12 @@ render(){
                 <h1 className="grey-text">Login</h1>
             </div>
         <form className="login-form">
-        <label htmlFor="email">Email: </label>
+        <label htmlFor="username">Username: </label>
         <input
             type="text"
-            name="email"
-            placeholder="User@aol.com"
-            value={this.state.email}
+            name="username"
+            placeholder="fill in username"
+            value={this.state.username}
             onChange={this.handleInputChange}
         />
         <label htmlFor="password">Password: </label>

@@ -1,11 +1,39 @@
 import React, { Component } from "react";
 import "./Navbar.css";
+import axios from "axios";
 
 class Navbar extends Component {
+    constructor(){
+        super()
+        this.logout = this.logout.bind(this)
+    }
+
+
+    
+   logout(event){
+       event.preventDefault();
+       console.log(`loggin out`);
+       axios.post("logout").then(response => {
+           console.log(`responsdatafromLoggout ${response.data}`);
+           if (response.status === 200) {
+               this.props.updateUser({
+                   loggedIn: false,
+                   username: null
+               });
+           }
+       }).catch(error => {
+           console.log("logout error");
+    });
+} 
 
    
 
+
+
     render(){
+        const loggedIn = this.props.loggedIn;
+        console.log(`navbar render props`);
+        console.log(this.props);
         return(
             <nav>
             <div className="nav-wrapper teal lighten-2">
@@ -25,6 +53,6 @@ class Navbar extends Component {
           </nav>
         )
     }
-}
 
+}
 export default Navbar;

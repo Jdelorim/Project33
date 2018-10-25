@@ -32,8 +32,7 @@ app.post("/api/signup", (req,res) => {
     });
 });
 
-app.post(
-    "/login",
+app.post("/api/login",
     (req,res,next) => {
         console.log(`Login body: ${req.body}`);
         next();
@@ -48,7 +47,7 @@ app.post(
     }
 )
 
-app.get("/api/signup", (req, res, next) => {
+app.get("/getuser", (req, res, next) => {
     console.log(`user: ${req.user}`);
     if (req.user) {
         res.json({ user: req.user })

@@ -9,11 +9,22 @@ import Mannequin from "./components/Mannequin"
 import AddItem from "./components/AddItem"
 
 import "./App.css";
+import axios from "axios";
 
 class App extends Component {
 
 //component did mount - store that in state - necessary for database
 //handleclick - pass that to mannequin
+constructor(){
+  super()
+  this.state = {
+    loggedIn: false,
+    username: null
+  }
+  this.getUser = this.getUser.bind(this)
+  this.componentDidMount = this.componentDidMount.bind(this);
+  this.updateUser = this.updateUser.bind(this);
+}
 
   state = {
   clothing: {shirts: [""]},
@@ -29,8 +40,16 @@ class App extends Component {
   shirtIcon: "",
   pantsIcon: "",
   shoesIcon: "",
+
   loggedIn: false,
   username: null
+  }
+
+}
+
+
+  updateUser (userObject) {
+    this.setState(userObject);
   }
 
 handleHat = (icon, value) => {
@@ -59,7 +78,24 @@ saveOutfit = () => {
   // append to a favorite outfit div
 }
 
-
+getUser() {
+  axios.get("/getuser").then(response => {
+    console.log(`get user response: ${response.data}`);
+    if (response.data.user) {
+      console.log("get user: there is a user save in the server session");
+      this.setState({
+        loggedIn: true,
+        username: response.data.user.username
+      })
+    } else {
+      console.log("get user: no user");
+      this.setState({
+        loggedIn: false,
+        username: null
+      })
+    }
+  }) 
+}
 
 
   render() {
@@ -67,10 +103,13 @@ saveOutfit = () => {
       <Router>
       <div className="App">
  
-      <Navbar />
+      <Navbar updateUser={this.updateUser} loggedIn={this.state.loggedIn} />
        {/* <Switch> */}
           <Route exact path="/" component={Home} />
-          <Route exact path="/Login" component={Login} />
+          <Route path="/Login"
+          render={() =>
+          <Login updateUser={this.updateUser} />
+          } />
           <Route exact path="/Signup" component={SignUp} />
           <Route exact path="/AddItem" component={AddItem} />
 
