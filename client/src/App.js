@@ -5,113 +5,56 @@ import Home from "./components/Home";
 import SignUp from "./components/SignUp";
 import Login from "./components/Login";
 import UserInventory from "./components/UserInventory";
-import Mannequin from "./components/Mannequin"
-import AddItem from "./components/AddItem"
+import Mannequin from "./components/Mannequin";
+import AddItem from "./components/AddItem";
+import FacebookLoginButton from "./components/FacebookLoginButton";
 
 import "./App.css";
-import axios from "axios";
+// import axios from "axios";
 
 
 class App extends Component {
 
-//component did mount - store that in state - necessary for database
-//handleclick - pass that to mannequin
-// constructor(){
-//   super()
-//   this.state = {
-//     loggedIn: false,
-//     username: null
-//   }
-//   this.getUser = this.getUser.bind(this)
-//   this.componentDidMount = this.componentDidMount.bind(this);
-//   this.updateUser = this.updateUser.bind(this);
-// }
-
   state = {
-  clothing: {shirts: [""]},
-  user: "carter",
-  selectedClothing: "",
+    username: null
+  };
 
-  hatValue: "",
-  shirtValue: "",
-  pantsValue: "",
-  shoesValue: "",
-
-  hatIcon: "", 
-  shirtIcon: "",
-  pantsIcon: "",
-  shoesIcon: "",
-
-  loggedIn: false,
-  username: null
+  onFacebookLogin = (loginStatus, resultObject) => {
+    if (loginStatus === true) {
+      this.setState({
+        username: resultObject.user.name
+      });
+    } else {
+      alert('Facebook login error');
+    }
   }
 
-
-  // updateUser (userObject) {
-  //   this.setState(userObject);
-  // }
-
-handleHat = (icon, value) => {
-  this.setState({hatIcon: icon, hatValue: value})
-}
-
-handleShirt = (icon, value) => {
-  // alert ("alert")
-  // if (icon===)
-  this.setState({shirtIcon: icon, shirtValue: value})
-
-}
-
-handlePants = (icon, value) => {
-    this.setState({pantsIcon: icon, pantsValue: value})
-}
-
-handleShoes = (icon, value) => {
-  this.setState({shoesIcon: icon, shoesValue: value})
-}
-
-saveOutfit = () => {
-  const savedOutfit = [this.state.hatValue, this.state.shirtValue, this.state.pantsValue, this.state.shoesValue]
-  alert("alert " + savedOutfit)
-  // save as favorite outfit
-  // append to a favorite outfit div
-}
-
-getUser() {
-  axios.get("/getuser").then(response => {
-    console.log(`get user response: ${response.data}`);
-    if (response.data.user) {
-      console.log("get user: there is a user save in the server session");
-      this.setState({
-        loggedIn: true,
-        username: response.data.user.username
-      })
-    } else {
-      console.log("get user: no user");
-      this.setState({
-        loggedIn: false,
-        username: null
-      })
-    }
-  }) 
-}
-
-
   render() {
+    const { username } = this.state;
     return (
       <Router>
       <div className="App">
  
       <Navbar updateUser={this.updateUser} loggedIn={this.state.loggedIn} />
-       {/* <Switch> */}
+    
           <Route exact path="/" component={Home} />
-          <Route path="/Login"
-          render={() =>
-          <Login updateUser={this.updateUser} />
-          } />
+          <Route path="/Login" />
+
           <Route exact path="/Signup" component={SignUp} />
           <Route exact path="/AddItem" component={AddItem} />
 
+        <div className="App-intro">
+          { !username &&
+            <div>
+              <FacebookLoginButton onLogin={this.onFacebookLogin}>
+                <button>Facebook</button>
+              </FacebookLoginButton>
+            </div>
+          }
+          {username &&
+            <p>Welcome back, {username}</p>
+          }
+        </div>
           
           <div className='flex-container'>
          
@@ -120,10 +63,6 @@ getUser() {
          
           </div>
 
-
-         
-  
-        {/* </Switch> */}
       </div>
       </Router>
     ); 
